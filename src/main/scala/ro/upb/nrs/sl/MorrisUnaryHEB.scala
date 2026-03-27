@@ -616,12 +616,12 @@ object MorrisUnaryHEB {
                                                       r is next bit of not reprsentable mantissa or from rest bit
                                                       */
                                                       val g : Boolean = if(fraction_diff>=1)
-                                                                          ((mantissa_c.value & (1<<(fraction_diff-1))) != 0)
+                                                                          ((mantissa_c.value & (BigInt(1L)<<(fraction_diff-1))) != 0)
                                                                         else if(rest_bits_c != Nil)
                                                                           rest_bits_c.head
                                                                         else false
                                                       val r : Boolean = if(fraction_diff>=2)
-                                                                          ((mantissa_c.value & (1<<(fraction_diff-2))) != 0)
+                                                                          ((mantissa_c.value & (BigInt(1)<<(fraction_diff-2))) != 0)
                                                                         else if(fraction_diff==1) {
                                                                           if(rest_bits_c != Nil)
                                                                             rest_bits_c.head
@@ -633,7 +633,7 @@ object MorrisUnaryHEB {
                                                                             else false
                                                                           else false
                                                       val s : Boolean = if(fraction_diff>=2) 
-                                                                          ( ( mantissa_c.value & ( (1 << ( fraction_diff - 1 ) ) - 1 ) ) != 0) || rest_bits_c.foldLeft(false)( (a, b)=>(a | b) )
+                                                                          ( ( mantissa_c.value & ( (BigInt(1) << ( fraction_diff - 1 ) ) - 1 ) ) != 0) || rest_bits_c.foldLeft(false)( (a, b)=>(a | b) )
                                                                         else if(fraction_diff==1) {
                                                                           if(rest_bits_c != Nil)
                                                                             rest_bits_c.tail.foldLeft(false)( (a, b)=>(a | b) )
