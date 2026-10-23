@@ -305,7 +305,10 @@ abstract class Morris_B extends FixedPrecisionNumberRepresentationSystem with Ac
     } else {
       val G = this.value.exponent.value.binaryEncode.length - 1
       val binaryG : String = auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(this.g_size, NaturalNumber(G).binaryEncode))
-      val binaryExponent : String = (if(this.value.exponent.sign) "1" else "0") + auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(G + 1, this.value.exponent.value.binaryEncode))
+      // A zero exponent gets its sign bit set: with g = 0 and a clear sign bit,
+      // +1.0 and -1.0 would be all zeros (zero) and 1 followed by zeros (NR).
+      val exponentSign : Boolean = this.value.exponent.sign || this.value.exponent.value == NaturalNumber(0)
+      val binaryExponent : String = (if(exponentSign) "1" else "0") + auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(G + 1, this.value.exponent.value.binaryEncode))
       val mantissaWithoutHiddenBit = this.value.mantissa.binaryEncode take this.value.fraction_size
       val binarymantissa : String = auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(this.value.fraction_size, mantissaWithoutHiddenBit))
       val binaryAbsolute : String = (binaryG + binaryExponent + binarymantissa) take (this.size - 1)

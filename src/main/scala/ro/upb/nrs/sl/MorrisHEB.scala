@@ -304,7 +304,10 @@ abstract class MorrisHEB_B extends FixedPrecisionNumberRepresentationSystem with
       val exponent_size = this.value.exponent.value.binaryEncode.length - 1
       val G = if(this.value.exponent.value == NaturalNumber(0)) 0 else exponent_size + 1
       val binaryG : String = auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(this.g_size, NaturalNumber(G).binaryEncode))
-      val binaryExponent : String = (if(this.value.exponent.sign) "1" else "0") + auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(exponent_size+1, this.value.exponent.value.binaryEncode)).tail
+      // A zero exponent (G = 0) gets its sign bit set, the decoder ignores it but
+      // otherwise +1.0 and -1.0 would encode as zero and NR.
+      val exponentSign : Boolean = this.value.exponent.sign || this.value.exponent.value == NaturalNumber(0)
+      val binaryExponent : String = (if(exponentSign) "1" else "0") + auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(exponent_size+1, this.value.exponent.value.binaryEncode)).tail
       val mantissaWithoutHiddenBit = this.value.mantissa.binaryEncode take this.value.fraction_size
       val binarymantissa : String = auxiliaryFunctions.BinaryEncodetoBinaryString(auxiliaryFunctions.BinaryEncodeFixedWidth(this.value.fraction_size, mantissaWithoutHiddenBit))
       val binaryAbsolute : String = (binaryG + binaryExponent + binarymantissa) take (this.size - 1)
